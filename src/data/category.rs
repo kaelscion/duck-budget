@@ -1,5 +1,6 @@
 use uuid::Uuid;
 
+#[derive(Debug, Clone, PartialEq)]
 pub struct Category {
     pub id: Uuid,
     pub name: String,

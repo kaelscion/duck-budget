@@ -1,6 +1,7 @@
 use uuid::Uuid;
-use transaction::Transaction;
+use crate::data::transaction::Transaction;
 
+#[derive(Debug, Clone, PartialEq)]
 pub struct Account {
     pub id: Uuid,
     pub name: String,

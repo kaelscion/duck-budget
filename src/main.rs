@@ -2,10 +2,12 @@
 // need dioxus
 use dioxus::prelude::*;
 
-use components::Hero;
+use components::Account;
+use data::Account as AccountData;
 
 /// Define a components module that contains all shared components for our app.
 mod components;
+mod data;
 
 // We can import assets in dioxus with the `asset!` macro. This macro takes a path to an asset relative to the crate root.
 // The macro returns an `Asset` type that will display as the path to the asset in the browser or a local path in desktop bundles.
@@ -26,6 +28,10 @@ fn main() {
 #[component]
 fn App() -> Element {
     // The `rsx!` macro lets us define HTML inside of rust. It expands to an Element with all of our HTML inside.
+    let account_data = AccountData::new(
+        "Personal Checking".to_string(),
+        100.0
+    );
     rsx! {
         // In addition to element and text (which we will see later), rsx can contain other components. In this case,
         // we are using the `document::Link` component to add a link to our favicon and main CSS file into the head of our app.
@@ -33,7 +39,7 @@ fn App() -> Element {
         document::Link { rel: "stylesheet", href: MAIN_CSS }
 
 
-        Hero {}
+        Account {data: account_data}
 
     }
 }

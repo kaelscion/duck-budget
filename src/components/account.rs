@@ -1,14 +1,15 @@
 use dioxus::prelude::*;
+use crate::data::Account as AccountData;
 
 const HEADER_SVG: Asset = asset!("/assets/header.svg");
 
 #[component]
-pub fn Hero() -> Element {
+pub fn Account(data: AccountData) -> Element {
     rsx! {
         // We can create elements inside the rsx macro with the element name followed by a block of attributes and children.
         div {
             // Attributes should be defined in the element before any children
-            id: "hero",
+            id: "account",
             // After all attributes are defined, we can define child elements and components
             img { src: HEADER_SVG, id: "header" }
             div { id: "links",
