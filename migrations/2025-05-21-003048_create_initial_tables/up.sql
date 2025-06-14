@@ -1,0 +1,29 @@
+-- Your SQL goes here
+CREATE TABLE account (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(100) NOT NULL,
+    balance DECIMAL(10, 2) NOT NULL,
+    created_at TEXT NOT NULL DEFAULT UNIXEPOCH,
+    updated_at TEXT NOT NULL DEFAULT UNIXEPOCH
+);
+
+CREATE TABLE category (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(50) NOT NULL,
+    description VARCHAR(100) NOT NULL,
+    created_at TEXT NOT NULL DEFAULT UNIXEPOCH,
+    updated_at TEXT NOT NULL DEFAULT UNIXEPOCH
+);
+
+CREATE TABLE transactions (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    label VARCHAR(100) NOT NULL,
+    category_id INTEGER NOT NULL,
+    account_id INTEGER NOT NULL,
+    amount DECIMAL(10, 2) NOT NULL,
+    transaction_type VARCHAR(30) NOT NULL,
+    created_at TEXT NOT NULL DEFAULT UNIXEPOCH,
+    updated_at TEXT NOT NULL DEFAULT UNIXEPOCH,
+    FOREIGN KEY (account_id) REFERENCES account(id),
+    FOREIGN KEY (category_id) REFERENCES category(id)
+);

@@ -3,10 +3,21 @@ body {
     color: #ffffff;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 20px;
+    width: 100%;
 }
 
-#hero {
+#account {
     margin: 0;
+    min-width: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#transaction-list{
+    margin: 0;
+    min-width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
