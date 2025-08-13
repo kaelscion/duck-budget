@@ -1,10 +1,14 @@
 use diesel::prelude::*;
+use diesel::r2d2::{ConnectionManager, Pool};
+use diesel::pg::PgConnection;
 use dotenvy::dotenv;
-use std::env;
+use diesel::insert_into;
+use std::sync::OnceLock;
+use diesel::r2d2::PooledConnection;
 
-
-fn seed_default_categories(conn: &mut SqliteConnection) -> Result<usize, diesel::result::Error>{
-    use crate::models::category::NewCategory;
+fn seed_default_categories(conn: &mut PooledConnection<diesel::r2d2::ConnectionManager<PgConnection>>) -> Result<usize, diesel::result::Error>{
+    use crate::core::models::category::NewCategory;
+    use crate::core::schema::category::dsl::*;
     let categories = vec![
         NewCategory {
             name: "Food".to_string(),
@@ -19,34 +23,49 @@ fn seed_default_categories(conn: &mut SqliteConnection) -> Result<usize, diesel:
             description: "Gas, public transport, etc.".to_string(),
         },
     ];
-    insert_into(category::category)
+    insert_into(category)
         .values(&categories)
         .execute(conn)
 }
 
-fn seed_default_accounts(conn: &mut SqliteConnection) -> Result<usize, diesel::result::Error> {
-    let account = NewAccount {
+fn seed_default_accounts(conn: &mut PooledConnection<diesel::r2d2::ConnectionManager<PgConnection>>) -> Result<usize, diesel::result::Error> {
+    use crate::core::models::account::NewAccount;
+    use crate::core::schema::account::dsl::*;
+    let new_account = NewAccount {
         name: "Personal Savings".to_string(),
         balance: 100.0.into(),
     };
-    insert_into(account::account)
-        .values(&account)
+    insert_into(account)
+        .values(&new_account)
         .execute(conn)
 }
 
-fn seed_defaults(conn: &mut SqliteConnection) {
+fn seed_defaults(conn: &mut PooledConnection<diesel::r2d2::ConnectionManager<PgConnection>>) {
     seed_default_categories(conn);
     seed_default_accounts(conn);
 }
 
+static POOL: OnceLock<Pool<ConnectionManager<PgConnection>>> = OnceLock::new();
 
-#[cfg(feature = "server")]
-thread_local! {
-    pub static DB : rusqlite::Connection = {
-        dotenv().ok(); 
-        let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-        let conn = rusqlite::Connection::open(database_url).expect("Failed to connect to database");
-        seed_defaults(&mut conn);
-        conn
-    };
+async fn init_pool() -> Pool<ConnectionManager<PgConnection>> {
+    let secret = "postgresql://test_user:test_pass@localhost:5432/duck-budget";
+    let manager = ConnectionManager::<PgConnection>::new(secret);
+    tracing::info!("Connecting to database at {}", secret);
+    let pool = Pool::builder()
+        .max_size(25)
+        .build(manager)
+        .expect("Failed to create pool");
+    pool
+}
+
+
+pub async fn get_pool() -> &'static Pool<ConnectionManager<PgConnection>> {
+    if let Some(pool) = POOL.get() {
+        pool
+    } else {
+        // Initialize the pool asynchronously
+        let pool = init_pool().await;
+        POOL.set(pool).expect("Failed to set global pool");
+        POOL.get().unwrap()
+    }
 }

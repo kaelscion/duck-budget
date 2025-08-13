@@ -1,5 +1,5 @@
 use dioxus::prelude::*;
-use crate::models::account::Account as AccountData;
+use crate::core::models::account::Account as AccountData;
 // use crate::components::transaction::TransactionList;
 
 

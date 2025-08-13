@@ -1,5 +1,5 @@
 use diesel::prelude::*;
-use crate::schema::transactions;
+use crate::core::schema::transactions;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum TransactionType {
@@ -25,13 +25,13 @@ impl TransactionType {
 
 #[derive(Queryable, Selectable, PartialEq, Debug, Clone)]
 #[diesel(table_name = transactions)]
-#[diesel(check_for_backend(diesel::sqlite::Sqlite))]
+#[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct Transaction {
     pub id: i32,
     pub label: String,
     pub category_id: i32,
     pub account_id: i32,
-    pub amount: f64,
+    pub amount: f32,
     pub transaction_type: String,
     pub created_at: String,
     pub updated_at: String,
@@ -45,6 +45,6 @@ pub struct NewTransaction {
     pub label: String,
     pub category_id: i32,
     pub account_id: i32,
-    pub amount: f64,
+    pub amount: f32,
     pub transaction_type: String,
 }

@@ -1,8 +1,7 @@
 use dioxus::prelude::*;
-use uuid::Uuid;
-use crate::data::transaction::get_transactions_by_account_id;
-use crate::data::category::get_category_by_id;
-use crate::models::transactions::Transaction as TransactionData;
+use crate::core::data::transaction::get_transactions_by_account_id;
+use crate::core::data::category::get_category_by_id;
+use crate::core::models::transactions::Transaction as TransactionData;
 
 #[component]
 fn Transaction(
